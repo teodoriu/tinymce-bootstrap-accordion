@@ -3,27 +3,13 @@ tinymce.PluginManager.add('bootstrapaccordion', function(editor, url) {
 	editor.addButton('bootstrapaccordion', {
 		text: 'Bootstrap Accordion',
 		icon: false,
-		onclick: function() {
-			// Open window
-			editor.windowManager.open({
-				title: 'Example plugin',
-				body: [
-					{type: 'textbox', name: 'title', label: 'Title'}
-				],
-				onsubmit: function(e) {
-					// Insert content when the window form is submitted
-					editor.insertContent('Title: ' + e.data.title);
-				}
-			});
-		}
+		onclick: accordionDialog,
+		stateSelector: 'div.bootstrap-accordion *'
 	});
-
-	// Adds a menu item to the tools menu
-	editor.addMenuItem('bootstrapaccordion', {
-		text: 'Bootstrap Accordion',
-		context: 'insert',
-		onclick: function() {
-			// Open window with a specific url
+	
+	function accordionDialog() {
+			var accordionTitle, accordionContent, accordionIn, current, win;
+			
 			editor.windowManager.open({
 				title: 'Accordion',
 				url: url + '/dialog.html',
@@ -33,13 +19,35 @@ tinymce.PluginManager.add('bootstrapaccordion', function(editor, url) {
 					{
 						text: 'Insert',
 						onclick: function() {
-							// Top most window object
-							var win = editor.windowManager.getWindows()[0];
+							
+							var timestamp = new Date().getTime();
+							
+							var accordionTitle = win.getContentWindow().document.getElementById('accordion-title').value;
+							var accordionContent = win.getContentWindow().tinyMCE.activeEditor.getContent({format : 'raw'});
+							var accordionIn = win.getContentWindow().document.getElementById('accordion-open').value == 'Yes' ? ' in' : '';
 
-							// Insert the contents of the dialog.html textarea into the editor
-							editor.insertContent(win.getContentWindow().tinyMCE.activeEditor.getContent({format : 'raw'}));
+							var accordion =
+								'<div class="panel panel-default bootstrap-accordion">' +
+									'<div class="panel-heading" role="tab" id="heading-' + timestamp + '">' +
+										'<h4 class="panel-title">' +
+											'<a role="button" class="bootstrap-accordion-title" data-toggle="collapse" data-parent="#accordion" href="#collapse-' + timestamp + '">' +
+												accordionTitle +
+											'</a>' +
+										'</h4>' +
+									'</div>' +
+									'<div id="collapse-' + timestamp + '" class="panel-collapse collapse' + accordionIn + '" role="tabpanel">' +
+										'<div class="panel-body bootstrap-accordion-content">' +
+											accordionContent +
+										'</div>'
+									'</div>'
+								'</div>';
 
-							// Close the window
+							if(current.length > 0) {
+								current.remove();
+							}
+
+							editor.insertContent(accordion);
+
 							win.close();
 						}
 					},
@@ -47,6 +55,18 @@ tinymce.PluginManager.add('bootstrapaccordion', function(editor, url) {
 					{text: 'Close', onclick: 'close'}
 				]
 			});
+			
+			// Top most window object
+			win = editor.windowManager.getWindows()[0];
+			current = $(editor.selection.getNode()).closest('.bootstrap-accordion');
+			
+			win.getContentWindow().document.body.onload = function() {
+				if(current.length > 0) {
+					win.getContentWindow().document.getElementById('accordion-title').value = current.find('.bootstrap-accordion-title').html();
+					win.getContentWindow().tinyMCE.activeEditor.setContent(current.find('.bootstrap-accordion-content').html());
+					win.getContentWindow().document.getElementById('accordion-open').value = (current.find('.panel-collapse.collapse.in').length > 0 ? 'Yes' : 'No');
+				}
+			}
 		}
-	});
+	
 });
