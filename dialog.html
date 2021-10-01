@@ -1,24 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src='https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.3.7/tinymce.min.js'></script>
-	<script>
-				tinymce.init({
-				selector: "textarea#accordion-content"
-			});
-	</script>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <style>
+        .form-control {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 0 0 0 5px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+            box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+            -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+        }
+    </style>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.9.2/tinymce.min.js'></script>
+    <script>
+      tinymce.init({
+        selector: 'textarea#accordion-content',
+        plugins: [
+          'link anchor code'
+        ],
+        toolbar1: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link | code',
+      });
+
+    </script>
 </head>
 <body>
-	<h3>Title:</h3>
-	<input id="accordion-title"/>
-	<h3>Content:</h3>
-	<textarea id="accordion-content"></textarea>
-	<h3>Open at first?</h3>
-	<p>
-		<select id="accordion-open">
-			<option>No</option>
-			<option>Yes</option>
-		</select>
-	</p>
+<h3>Title:</h3>
+<input class="form-control" id="accordion-title"/>
+<h3>Content:</h3>
+<textarea id="accordion-content"></textarea>
+<h3>Open at first?</h3>
+<p>
+    <select class="form-control" id="accordion-open">
+        <option value="No">No</option>
+        <option value="Yes">Yes</option>
+    </select>
+</p>
 </body>
 </html>
